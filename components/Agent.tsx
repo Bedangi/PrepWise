@@ -22,7 +22,7 @@ interface SavedMessage {
 }
  
 
-const Agent = ({userName, userId, type, interviewId, questions, feedbackId}: AgentProps) => {
+const Agent = ({userName, userId, interviewId, feedbackId, type,  questions}: AgentProps) => {
     const router = useRouter();
     const [isSpeaking, setisSpeaking] = useState(false);
     const [callStatus, setcallStatus] = useState<CallStatus>(CallStatus.INACTIVE)
@@ -47,10 +47,12 @@ const Agent = ({userName, userId, type, interviewId, questions, feedbackId}: Age
         };
     
         const onSpeechStart = () => {
+          console.log("speech start");
           setisSpeaking(true);
         };
     
         const onSpeechEnd = () => {
+          console.log("speech end");
           setisSpeaking(false);
         };
 
@@ -100,12 +102,12 @@ const Agent = ({userName, userId, type, interviewId, questions, feedbackId}: Age
 
         if(callStatus === CallStatus.FINISHED){
             if(type === 'generate'){
-                router.push('/')
+                router.push("/");
             }else{
                 handleGenerateFeedback(messages);
             }
         }
-    }, [messages, callStatus, type, userId]);
+    }, [messages, callStatus, feedbackId, interviewId, router, type, userId]);
 
     const handleCall = async () => {
         setcallStatus(CallStatus.CONNECTING);
@@ -115,8 +117,8 @@ const Agent = ({userName, userId, type, interviewId, questions, feedbackId}: Age
                 variableValues: {
                     username: userName,
                     userid: userId,
-                }
-            })
+                },
+            });
         } else{
             let formattedQuestions = '';
             if(questions){
@@ -147,7 +149,7 @@ const Agent = ({userName, userId, type, interviewId, questions, feedbackId}: Age
                     <Image src="/ai-avatar.png" alt='vapi' width={65} height={54} className='object-cover'/>
                     {isSpeaking && <span className='animate-speak'/>}
                 </div>
-                <h3>AI Interview</h3>
+                <h3>AI Interviewer</h3>
             </div>
 
             <div className="card-border">
@@ -173,12 +175,12 @@ const Agent = ({userName, userId, type, interviewId, questions, feedbackId}: Age
                 <button className='relative btn-call' onClick={handleCall}>
                     <span className={cn('absolute animate-ping rounded-full opacity-75', callStatus !== 'CONNECTING' && 'hidden')} />
 
-                    <span>
+                    <span className='relative'>
                     {isCallInactiveOrFinished ? 'Call' : '...'}
                     </span>
                 </button>
             ): (
-                <button className='btn-disconnect' onClick={handleDisconnect}>
+                <button className='btn-disconnect' onClick={() => handleDisconnect() }>
                     End
                 </button>
             )}

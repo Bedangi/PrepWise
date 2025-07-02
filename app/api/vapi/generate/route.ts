@@ -23,7 +23,7 @@ export async function POST(request: Request){
         Thank you! <3
     `,
         });
-
+        
         const interview = {
             role: role,
             type: type,
@@ -43,7 +43,11 @@ export async function POST(request: Request){
         console.error(e);
         return Response.json({
             success: false,
-            e
+            error: e,
         }, {status: 500})
     }
+}
+
+export async function GET() {
+  return Response.json({ success: true, data: "Thank you!" }, { status: 200 });
 }
